@@ -19,8 +19,7 @@ public class ActividadFisicaController {
         return "Saved";
     }
 
-    @GetMapping(path = "/get",
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "/get")
     public @ResponseBody
     Iterable<ActividadFisica> getActividadFisicaCreadoPo(@RequestParam String creadoPor) {
         return repository.findByCreadoPor(creadoPor);

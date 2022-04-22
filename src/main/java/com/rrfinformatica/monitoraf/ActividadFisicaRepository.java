@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ActividadFisicaRepository extends CrudRepository<ActividadFisica, Long> {
     List<ActividadFisica> findByCreadoPor(String creadoPor);
-    List<ActividadFisica> findByTipo(String tipo);
+    List<ActividadFisica> findByActividad(String actividad);
     ActividadFisica findById(long id);
 }

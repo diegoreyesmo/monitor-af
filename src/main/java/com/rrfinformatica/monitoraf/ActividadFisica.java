@@ -20,8 +20,8 @@ public class ActividadFisica {
     protected ActividadFisica() {
     }
 
-    public ActividadFisica(String tipo, String categoria, String creadoPor) {
-        this.actividad = tipo;
+    public ActividadFisica(String actividad, String categoria, String creadoPor) {
+        this.actividad = actividad;
         this.categoria = categoria;
         this.creadoPor = creadoPor;
     }
@@ -30,7 +30,7 @@ public class ActividadFisica {
     public String toString() {
         return "ActividadFisica{" +
                 "id=" + id +
-                ", tipo='" + actividad + '\'' +
+                ", actividad='" + actividad + '\'' +
                 ", categoria='" + categoria + '\'' +
                 ", creadoPor='" + creadoPor + '\'' +
                 '}';

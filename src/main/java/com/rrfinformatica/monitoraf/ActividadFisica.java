@@ -12,7 +12,7 @@ public class ActividadFisica {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotNull
-    private String tipo;
+    private String actividad;
     private String categoria;
     @NotNull
     private String creadoPor;
@@ -21,7 +21,7 @@ public class ActividadFisica {
     }
 
     public ActividadFisica(String tipo, String categoria, String creadoPor) {
-        this.tipo = tipo;
+        this.actividad = tipo;
         this.categoria = categoria;
         this.creadoPor = creadoPor;
     }
@@ -30,7 +30,7 @@ public class ActividadFisica {
     public String toString() {
         return "ActividadFisica{" +
                 "id=" + id +
-                ", tipo='" + tipo + '\'' +
+                ", tipo='" + actividad + '\'' +
                 ", categoria='" + categoria + '\'' +
                 ", creadoPor='" + creadoPor + '\'' +
                 '}';
@@ -44,12 +44,12 @@ public class ActividadFisica {
         this.id = id;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getActividad() {
+        return actividad;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setActividad(String actividad) {
+        this.actividad = actividad;
     }
 
     public String getCategoria() {

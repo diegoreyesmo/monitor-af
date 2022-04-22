@@ -28,11 +28,11 @@ public class MonitorAfApplication {
     public CommandLineRunner demo(ActividadFisicaRepository repository) {
         return (args) -> {
             // save a few customers
-            repository.save(new ActividadFisica("tipo1", "categoria1", "usuario1"));
-            repository.save(new ActividadFisica("tipo2", "categoria2", "usuario2"));
-            repository.save(new ActividadFisica("tipo3", "categoria1", "usuario2"));
-            repository.save(new ActividadFisica("tipo4", "categoria2", "usuario2"));
-            repository.save(new ActividadFisica("tipo5", "categoria1", "usuario1"));
+//            repository.save(new ActividadFisica("tipo1", "categoria1", "usuario1"));
+//            repository.save(new ActividadFisica("tipo2", "categoria2", "usuario2"));
+//            repository.save(new ActividadFisica("tipo3", "categoria1", "usuario2"));
+//            repository.save(new ActividadFisica("tipo4", "categoria2", "usuario2"));
+//            repository.save(new ActividadFisica("tipo5", "categoria1", "usuario1"));
 
 
             // fetch all customers
@@ -44,20 +44,20 @@ public class MonitorAfApplication {
             log.info("");
 
             // fetch an individual actividadFisica by ID
-            ActividadFisica actividadFisica = repository.findById(1L);
-            log.info("ActividadFisica found with findById(1L):");
-            log.info("--------------------------------");
-            log.info(actividadFisica.toString());
-            log.info("");
-
-            // fetch customers by last name
-            log.info("ActividadFisica found with findByCreadoPor('usuario2'):");
-            log.info("--------------------------------------------");
-            repository.findByCreadoPor("usuario2").forEach(bauer -> {
-                log.info(bauer.toString());
-            });
-
-            log.info("");
+//            ActividadFisica actividadFisica = repository.findById(1L);
+//            log.info("ActividadFisica found with findById(1L):");
+//            log.info("--------------------------------");
+//            log.info(actividadFisica.toString());
+//            log.info("");
+//
+//            // fetch customers by last name
+//            log.info("ActividadFisica found with findByCreadoPor('usuario2'):");
+//            log.info("--------------------------------------------");
+//            repository.findByCreadoPor("usuario2").forEach(bauer -> {
+//                log.info(bauer.toString());
+//            });
+//
+//            log.info("");
         };
     }
 }

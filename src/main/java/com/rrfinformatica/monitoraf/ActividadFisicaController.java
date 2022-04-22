@@ -5,6 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping(path = "/af")
 public class ActividadFisicaController {
@@ -13,7 +15,7 @@ public class ActividadFisicaController {
 
     @PostMapping(path = "/add") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewActividadFisica(@RequestBody ActividadFisica actividadFisica) {
+    String addNewActividadFisica(@Valid @RequestBody ActividadFisica actividadFisica) {
         repository.save(actividadFisica);
         return "saved";
     }

@@ -1,6 +1,7 @@
 package com.rrfinformatica.monitoraf;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,8 @@ public class ActividadFisicaController {
         return "Saved";
     }
 
-    @PostMapping(path = "/get") // Map ONLY POST Requests
+    @PostMapping(path = "/get",
+            consumes = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody
     Iterable<ActividadFisica> getActividadFisicaCreadoPo(@RequestBody String creadoPor) {
         return repository.findByCreadoPor(creadoPor);

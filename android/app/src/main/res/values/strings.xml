@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">MonitorAF</string>
+    <!--telegram-->
+    <string name="url_telegram_error">https://api.telegram.org/bot1406371537:AAEy26lOb_4kIbnVK-dZ8vRNDpYuDsdrsKQ/sendMessage</string>
+    <string name="chat_id_error">-489271395</string>
+    <string name="url_telegram_info">https://api.telegram.org/bot1478312047:AAHw4xpCcW8ycRfty1Xii5opNgtxtI9RUZc/sendMessage</string>
+    <string name="chat_id_info">-430001919</string>
+
+    <!--shared preferences-->
+    <string name="shared_preferences">com.rrfinformatica.monitoraf</string>
+    <string name="shared_preference_username">cl.sistemasrrf.boletaelectronica.username</string>
+    <string name="atencion">Atencion</string>
+    <string name="fecha">fecha</string>
+    <string name="hora">hora</string>
+    <string name="duration">duracion (min)</string>
+    <string name="guardar">Guardar</string>
+    <string name="email">Correo:</string>
+    <string name="email_hint">correo@ejemplo.cl</string>
+    <string name="ingress">Ingresar</string>
+    <string name="activity">Actividad:</string>
+    <string name="plus_sign">+</string>
+</resources>

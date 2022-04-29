@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="background">
+        <item name="android:background">@color/colorWhiteDark</item>
+    </style>
+
+    <style name="menuButtom">
+        <item name="android:textColor">@color/colorWhiteDark</item>
+        <item name="android:background">@drawable/rectangle_blue</item>
+        <item name="android:layout_margin">15dp</item>
+    </style>
+
+    <style name="titleText">
+        <item name="android:textSize">24dp</item>
+        <item name="android:textColor">@color/colorBlue</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="textViewStyle">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:background">@color/whiteAlpha50</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+</resources>

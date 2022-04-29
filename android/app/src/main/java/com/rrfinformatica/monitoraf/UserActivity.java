@@ -18,7 +18,7 @@ public class UserActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-
+private String keySharedPreferenceUsername;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +29,12 @@ public class UserActivity extends AppCompatActivity {
             editText = findViewById(R.id.otp);
             buttonValidate = findViewById(R.id.button_validate_otp);
             sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+            keySharedPreferenceUsername = getString(R.string.shared_preference_username);
+            if(sharedPreferences.contains(keySharedPreferenceUsername) && !sharedPreferences.getString(keySharedPreferenceUsername,"default").equals("default")){
+                editText.setText(sharedPreferences.getString(keySharedPreferenceUsername,"default"));
+                Intent intent = new Intent(getApplicationContext(),MonitorAFActivity.class);
+                startActivity(intent);
+            }
             editor = sharedPreferences.edit();
             buttonValidate.setOnClickListener(l -> saveUsername());
         } catch (Exception e) {
@@ -39,9 +45,8 @@ public class UserActivity extends AppCompatActivity {
     private void saveUsername() {
         try {
             if (editText != null && editText.getText() != null) {
-                String editTextValue = editText.getText().toString().trim();
+                String editTextValue = editText.getText().toString().trim().toLowerCase();
                 String username = editTextValue.isEmpty() ? "default" : editTextValue;
-                String keySharedPreferenceUsername = getString(R.string.shared_preference_username);
                 editor.putString(keySharedPreferenceUsername, username);
                 editor.commit();
                 Intent intent = new Intent(getApplicationContext(),MonitorAFActivity.class);

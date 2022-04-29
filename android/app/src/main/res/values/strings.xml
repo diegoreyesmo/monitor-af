@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MonitorAF</string>
+    <string name="app_name">AFI-UDEC</string>
     <!--telegram-->
     <string name="url_telegram_error">https://api.telegram.org/bot1406371537:AAEy26lOb_4kIbnVK-dZ8vRNDpYuDsdrsKQ/sendMessage</string>
     <string name="chat_id_error">-489271395</string>

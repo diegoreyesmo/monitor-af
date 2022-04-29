@@ -7,14 +7,17 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class ActividadFisica {
+public class Registro {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotNull
     private String actividad;
-    private String categoria;
     @NotNull
-    private String creadoPor;
+    private String timestamp;
+    @NotNull
+    private String usuario;
+    @NotNull
+    private Integer duracion;
 
 }

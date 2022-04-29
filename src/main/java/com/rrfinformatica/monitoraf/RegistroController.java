@@ -7,27 +7,27 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping(path = "/af")
-public class ActividadFisicaController {
+@RequestMapping(path = "/registro")
+public class RegistroController {
     @Autowired
-    private ActividadFisicaRepository repository;
+    private RegistroRepository repository;
 
     @PostMapping(path = "/add") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewActividadFisica(@Valid @RequestBody ActividadFisica actividadFisica) {
-        repository.save(actividadFisica);
+    String addNewRegistro(@Valid @RequestBody Registro registro) {
+        repository.save(registro);
         return "saved";
     }
 
     @GetMapping(path = "/get")
     public @ResponseBody
-    Iterable<ActividadFisica> getActividadFisicaCreadoPo(@RequestParam String creadoPor) {
-        return repository.findByCreadoPor(creadoPor);
+    Iterable<Registro> getRegistroPorUsuario(@RequestParam String usuario) {
+        return repository.findByUsuario(usuario);
     }
 
     @GetMapping(path = "/all")
     public @ResponseBody
-    Iterable<ActividadFisica> getAll() {
+    Iterable<Registro> getAll() {
         // This returns a JSON or XML with the users
         return repository.findAll();
     }

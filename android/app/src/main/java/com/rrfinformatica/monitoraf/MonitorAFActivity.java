@@ -58,6 +58,8 @@ public class MonitorAFActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            VolleyQueue.getInstance(this);
+            Telegram.getInstance(this);
             sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
             setContentView(R.layout.activity_monitoraf);
             loadingProgressBar = findViewById(R.id.loading);
@@ -86,7 +88,7 @@ public class MonitorAFActivity extends AppCompatActivity {
             input.requestFocus();
 
 
-            VolleyQueue.getInstance(this).addArrayRequest(generateRequestGetActivity(username));
+            VolleyQueue.addArrayRequest(generateRequestGetActivity(username));
             addActivityButton.setOnClickListener(v ->
                     new AlertDialog.Builder(this)
                             .setMessage("Escriba el nombre de la nueva actividad física")
@@ -137,7 +139,7 @@ public class MonitorAFActivity extends AppCompatActivity {
             postparams.put("creadoPor", username);
             JsonObjectRequest jsonObjReq = generateRequestAddActivity(postparams);
             jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleyQueue.getInstance(this).addRequest(jsonObjReq);
+            VolleyQueue.addRequest(jsonObjReq);
         } catch (JSONException e) {
             ErrorUtil.handleError(e, TAG);
         }
@@ -152,7 +154,7 @@ public class MonitorAFActivity extends AppCompatActivity {
             postparams.put("duracion", registryDTO.getDuracion());
             JsonObjectRequest jsonObjReq = generateRequestAddRegistry(postparams);
             jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleyQueue.getInstance(this).addRequest(jsonObjReq);
+            VolleyQueue.addRequest(jsonObjReq);
         } catch (JSONException e) {
             ErrorUtil.handleError(e, TAG);
         }
@@ -196,7 +198,7 @@ public class MonitorAFActivity extends AppCompatActivity {
                     try {
                         if (response != null) {
                             AlertDialogUtil.showSimpleDialog(this, "Ingresado correctamente");
-                            VolleyQueue.getInstance(this).addArrayRequest(generateRequestGetActivity(username));
+                            VolleyQueue.addArrayRequest(generateRequestGetActivity(username));
                         }
                     } catch (Exception e) {
                         ErrorUtil.handleError(e, TAG);

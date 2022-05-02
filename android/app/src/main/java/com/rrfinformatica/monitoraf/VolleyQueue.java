@@ -22,12 +22,12 @@ public class VolleyQueue {
         return volleyQueue;
     }
 
-    public void addRequest(JsonObjectRequest jsonObjectRequest) {
+    public static void addRequest(JsonObjectRequest jsonObjectRequest) {
         if (requestQueue != null)
             requestQueue.add(jsonObjectRequest);
     }
 
-    public void addArrayRequest(JsonArrayRequest jsonArrayRequest) {
+    public static void addArrayRequest(JsonArrayRequest jsonArrayRequest) {
         if (requestQueue != null)
             requestQueue.add(jsonArrayRequest);
     }

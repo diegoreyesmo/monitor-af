@@ -11,7 +11,7 @@
     <string name="shared_preference_username">cl.sistemasrrf.boletaelectronica.username</string>
     <string name="atencion">Atencion</string>
     <string name="fecha">fecha</string>
-    <string name="hora">hora</string>
+    <string name="hora">Hora:</string>
     <string name="duration">duracion (min)</string>
     <string name="guardar">Guardar</string>
     <string name="email">Correo:</string>
@@ -19,4 +19,7 @@
     <string name="ingress">Ingresar</string>
     <string name="activity">Actividad:</string>
     <string name="plus_sign">+</string>
+    <string name="selectActivity">Seleccione una actividad:</string>
+    <string name="one">1</string>
+    <string name="dia">Día:</string>
 </resources>

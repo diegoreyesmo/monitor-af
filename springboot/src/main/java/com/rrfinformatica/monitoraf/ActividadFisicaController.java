@@ -13,9 +13,8 @@ public class ActividadFisicaController {
 
     @PostMapping(path = "/add") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewActividadFisica(@Valid @RequestBody ActividadFisica actividadFisica) {
-        repository.save(actividadFisica);
-        return "saved";
+    ActividadFisica addNewActividadFisica(@Valid @RequestBody ActividadFisica actividadFisica) {
+        return repository.save(actividadFisica);
     }
 
     @GetMapping(path = "/get")

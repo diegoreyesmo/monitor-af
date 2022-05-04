@@ -13,9 +13,8 @@ public class RegistroController {
 
     @PostMapping(path = "/add") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRegistro(@Valid @RequestBody Registro registro) {
-        repository.save(registro);
-        return "saved";
+    Registro addNewRegistro(@Valid @RequestBody Registro registro) {
+        return repository.save(registro);
     }
 
     @GetMapping(path = "/get")
@@ -27,7 +26,6 @@ public class RegistroController {
     @GetMapping(path = "/all")
     public @ResponseBody
     Iterable<Registro> getAll() {
-        // This returns a JSON or XML with the users
         return repository.findAll();
     }
 }

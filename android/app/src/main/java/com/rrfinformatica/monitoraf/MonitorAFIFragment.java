@@ -242,7 +242,7 @@ public class MonitorAFIFragment extends Fragment {
             JSONObject postparams = new JSONObject();
             postparams.put("actividad", registryDTO.getActividad());
             postparams.put("usuario", registryDTO.getUsuario());
-            postparams.put("incio", registryDTO.getIncio());
+            postparams.put("inicio", registryDTO.getIncio());
             postparams.put("termino", registryDTO.getTermino());
             postparams.put("duracion", registryDTO.getDuracion());
             JsonObjectRequest jsonObjReq = generateRequestAddRegistry(postparams);

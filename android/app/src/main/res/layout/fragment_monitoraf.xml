@@ -6,7 +6,7 @@
     style="@style/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MonitorAFActivity">
+    tools:context=".MonitorAFIFragment">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -102,7 +102,7 @@
                 android:orientation="horizontal">
 
                 <Spinner
-                    android:id="@+id/minutesSpinner"
+                    android:id="@+id/beginMinutesSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
@@ -110,13 +110,44 @@
                     android:entries="@array/minutes" />
 
                 <Spinner
-                    android:id="@+id/hoursSpinner"
+                    android:id="@+id/beginHoursSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:entries="@array/hours" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView5"
+                style="@style/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hora_termino" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/endMinutesSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:entries="@array/minutes" />
+
+                <Spinner
+                    android:id="@+id/endHoursSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:entries="@array/hours" />
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/textView4"

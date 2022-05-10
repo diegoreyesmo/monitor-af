@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,12 +15,12 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -35,7 +36,7 @@ import java.util.Map;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MonitorAFActivity extends AppCompatActivity {
+public class MonitorAFActivity extends Fragment {
     private static final String TAG = StringUtil.VERSION + "[monitorAF] ";
 
     private final TableLayout.LayoutParams rowLayoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
@@ -53,25 +54,30 @@ public class MonitorAFActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private String username;
 
+    private Context context;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        View root = inflater.inflate(R.layout.activity_monitoraf, container, false);
         try {
-            VolleyQueue.getInstance(this);
-            Telegram.getInstance(this);
-            sharedPreferences = getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
-            setContentView(R.layout.activity_monitoraf);
-            loadingProgressBar = findViewById(R.id.loading);
-            submitButton = (Button) findViewById(R.id.submitButton);
-            addActivityButton = (Button) findViewById(R.id.addActivityButton);
-            activitySpinner = (Spinner) findViewById(R.id.activitySpinner);
-            daySpinner = (Spinner) findViewById(R.id.daySpinner);
-            monthSpinner = (Spinner) findViewById(R.id.monthSpinner);
-            yearSpinner = (Spinner) findViewById(R.id.yearSpinner);
-            hourSpinner = (Spinner) findViewById(R.id.hoursSpinner);
-            minutesSpinner = (Spinner) findViewById(R.id.minutesSpinner);
-            durationEditText = (EditText) findViewById(R.id.durationEditText);
+            context = container.getContext();
+            VolleyQueue.getInstance(context);
+            Telegram.getInstance(context);
+
+            sharedPreferences = container.getContext().getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+
+            loadingProgressBar = root.findViewById(R.id.loading);
+            submitButton = (Button) root.findViewById(R.id.submitButton);
+            addActivityButton = (Button) root.findViewById(R.id.addActivityButton);
+            activitySpinner = (Spinner) root.findViewById(R.id.activitySpinner);
+            daySpinner = (Spinner) root.findViewById(R.id.daySpinner);
+            monthSpinner = (Spinner) root.findViewById(R.id.monthSpinner);
+            yearSpinner = (Spinner) root.findViewById(R.id.yearSpinner);
+            hourSpinner = (Spinner) root.findViewById(R.id.hoursSpinner);
+            minutesSpinner = (Spinner) root.findViewById(R.id.minutesSpinner);
+            durationEditText = (EditText) root.findViewById(R.id.durationEditText);
             username = sharedPreferences.getString(getString(R.string.shared_preference_username), "default");
             submitButton.setOnClickListener(v -> {
                 String date = yearSpinner.getSelectedItem().toString() + "-" + monthSpinner.getSelectedItem().toString() + "-" + daySpinner.getSelectedItem().toString();
@@ -79,10 +85,10 @@ public class MonitorAFActivity extends AppCompatActivity {
                 addRegistry(new RegistryDTO(activitySpinner.getSelectedItem().toString(), username, date + " " + time, durationEditText.getText().toString()));
             });
 
-            final EditText input = new EditText(this);
+            final EditText input = new EditText(context);
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             input.setOnFocusChangeListener((v1, hasFocus) -> input.post(() -> {
-                InputMethodManager inputMethodManager = (InputMethodManager) MonitorAFActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
             }));
             input.requestFocus();
@@ -90,7 +96,7 @@ public class MonitorAFActivity extends AppCompatActivity {
 
             VolleyQueue.addArrayRequest(generateRequestGetActivity(username));
             addActivityButton.setOnClickListener(v ->
-                    new AlertDialog.Builder(this)
+                    new AlertDialog.Builder(context)
                             .setMessage("Escriba el nombre de la nueva actividad física")
                             .setTitle("Agregar actividad")
                             .setView(input)
@@ -120,11 +126,12 @@ public class MonitorAFActivity extends AppCompatActivity {
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
         }
+        return root;
     }
 
     private void updateActivitySpinner(String[] arraySpinner) {
         try {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arraySpinner);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             activitySpinner.setAdapter(adapter);
         } catch (Exception e) {
@@ -197,7 +204,7 @@ public class MonitorAFActivity extends AppCompatActivity {
                 response -> {
                     try {
                         if (response != null) {
-                            AlertDialogUtil.showSimpleDialog(this, "Ingresado correctamente");
+                            AlertDialogUtil.showSimpleDialog(context, "Ingresado correctamente");
                             VolleyQueue.addArrayRequest(generateRequestGetActivity(username));
                         }
                     } catch (Exception e) {
@@ -228,7 +235,7 @@ public class MonitorAFActivity extends AppCompatActivity {
                 response -> {
                     try {
                         if (response != null) {
-                            AlertDialogUtil.showSimpleDialog(this, "Ingresado correctamente");
+                            AlertDialogUtil.showSimpleDialog(context, "Ingresado correctamente");
                         }
                     } catch (Exception e) {
                         ErrorUtil.handleError(e, TAG);
@@ -249,13 +256,10 @@ public class MonitorAFActivity extends AppCompatActivity {
 
     private void startProgressBar() {
         loadingProgressBar.setVisibility(View.VISIBLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void stopProgressBar() {
         loadingProgressBar.setVisibility(View.INVISIBLE);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
 }

@@ -36,7 +36,7 @@ import java.util.Map;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MonitorAFActivity extends Fragment {
+public class MonitorAFIFragment extends Fragment {
     private static final String TAG = StringUtil.VERSION + "[monitorAF] ";
 
     private final TableLayout.LayoutParams rowLayoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
@@ -55,12 +55,13 @@ public class MonitorAFActivity extends Fragment {
     private String username;
 
     private Context context;
+    private EditText input;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View root = inflater.inflate(R.layout.activity_monitoraf, container, false);
+        View root = inflater.inflate(R.layout.fragment_monitoraf, container, false);
         try {
             context = container.getContext();
             VolleyQueue.getInstance(context);
@@ -75,8 +76,8 @@ public class MonitorAFActivity extends Fragment {
             daySpinner = (Spinner) root.findViewById(R.id.daySpinner);
             monthSpinner = (Spinner) root.findViewById(R.id.monthSpinner);
             yearSpinner = (Spinner) root.findViewById(R.id.yearSpinner);
-            hourSpinner = (Spinner) root.findViewById(R.id.hoursSpinner);
-            minutesSpinner = (Spinner) root.findViewById(R.id.minutesSpinner);
+            hourSpinner = (Spinner) root.findViewById(R.id.beginHoursSpinner);
+            minutesSpinner = (Spinner) root.findViewById(R.id.beginMinutesSpinner);
             durationEditText = (EditText) root.findViewById(R.id.durationEditText);
             username = sharedPreferences.getString(getString(R.string.shared_preference_username), "default");
             submitButton.setOnClickListener(v -> {
@@ -85,7 +86,7 @@ public class MonitorAFActivity extends Fragment {
                 addRegistry(new RegistryDTO(activitySpinner.getSelectedItem().toString(), username, date + " " + time, durationEditText.getText().toString()));
             });
 
-            final EditText input = new EditText(context);
+            input = new EditText(context);
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             input.setOnFocusChangeListener((v1, hasFocus) -> input.post(() -> {
                 InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -93,25 +94,33 @@ public class MonitorAFActivity extends Fragment {
             }));
             input.requestFocus();
 
+            //if(input.getParent()!=null)
+            //    ((ViewGroup)input.getParent()).removeView(input); // <- fix
+
 
             VolleyQueue.addArrayRequest(generateRequestGetActivity(username));
-            addActivityButton.setOnClickListener(v ->
-                    new AlertDialog.Builder(context)
-                            .setMessage("Escriba el nombre de la nueva actividad física")
-                            .setTitle("Agregar actividad")
-                            .setView(input)
-                            .setPositiveButton("Agregar", (dialog, which) -> {
-                                startProgressBar();
-                                if (!input.getText().toString().trim().isEmpty()) {
-                                    addActivity(input.getText().toString());
-                                }
-                            })
-                            .setNeutralButton("Cancelar", (dialog, which) -> {
-                                stopProgressBar();
-                            })
-                            .setCancelable(false)
-                            .create()
-                            .show());
+            addActivityButton.setOnClickListener(v -> {
+                if (input.getParent() != null)
+                    ((ViewGroup) input.getParent()).removeView(input);
+                new AlertDialog.Builder(context)
+                        .setMessage("Escriba el nombre de la nueva actividad física")
+                        .setTitle("Agregar actividad")
+                        .setView(input)
+                        .setPositiveButton("Agregar", (dialog, which) -> {
+                            startProgressBar();
+
+                            if (!input.getText().toString().trim().isEmpty()) {
+                                addActivity(input.getText().toString());
+                            }
+                        })
+                        .setNeutralButton("Cancelar", (dialog, which) -> {
+                            stopProgressBar();
+                        })
+                        .setCancelable(false)
+                        .create()
+                        .show();
+
+            });
 
             int dayPosition = 0;// Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1;
             int monthPosition = 0;// Calendar.getInstance().get(Calendar.MONTH);
@@ -125,6 +134,7 @@ public class MonitorAFActivity extends Fragment {
 
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
+            e.printStackTrace();
         }
         return root;
     }
@@ -134,8 +144,10 @@ public class MonitorAFActivity extends Fragment {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             activitySpinner.setAdapter(adapter);
+            activitySpinner.setSelection(adapter.getCount()-1);
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
+            e.printStackTrace();
         }
     }
 
@@ -149,6 +161,7 @@ public class MonitorAFActivity extends Fragment {
             VolleyQueue.addRequest(jsonObjReq);
         } catch (JSONException e) {
             ErrorUtil.handleError(e, TAG);
+            e.printStackTrace();
         }
     }
 
@@ -164,6 +177,7 @@ public class MonitorAFActivity extends Fragment {
             VolleyQueue.addRequest(jsonObjReq);
         } catch (JSONException e) {
             ErrorUtil.handleError(e, TAG);
+            e.printStackTrace();
         }
     }
 
@@ -226,9 +240,9 @@ public class MonitorAFActivity extends Fragment {
 
     private JsonObjectRequest generateRequestAddRegistry(JSONObject postparams) {
         try {
-            Telegram.sendMessage("registro/add:"+postparams.toString(1));
+            Telegram.sendMessage("registro/add:" + postparams.toString(1));
         } catch (JSONException e) {
-
+            e.printStackTrace();
         }
         return new JsonObjectRequest(Request.Method.POST,
                 "http://ec2-18-118-50-38.us-east-2.compute.amazonaws.com:8081/registro/add", postparams,

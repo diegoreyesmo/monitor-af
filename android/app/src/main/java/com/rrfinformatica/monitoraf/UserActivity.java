@@ -32,7 +32,7 @@ private String keySharedPreferenceUsername;
             keySharedPreferenceUsername = getString(R.string.shared_preference_username);
             if(sharedPreferences.contains(keySharedPreferenceUsername) && !sharedPreferences.getString(keySharedPreferenceUsername,"default").equals("default")){
                 editText.setText(sharedPreferences.getString(keySharedPreferenceUsername,"default"));
-                Intent intent = new Intent(getApplicationContext(),MonitorAFActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MonitorAFIFragment.class);
                 startActivity(intent);
             }
             editor = sharedPreferences.edit();
@@ -49,7 +49,7 @@ private String keySharedPreferenceUsername;
                 String username = editTextValue.isEmpty() ? "default" : editTextValue;
                 editor.putString(keySharedPreferenceUsername, username);
                 editor.commit();
-                Intent intent = new Intent(getApplicationContext(),MonitorAFActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MonitorAFIFragment.class);
                 startActivity(intent);
             }
         } catch (Exception e) {

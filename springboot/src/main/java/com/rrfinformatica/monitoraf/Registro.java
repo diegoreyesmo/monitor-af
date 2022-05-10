@@ -14,7 +14,9 @@ public class Registro {
     @NotNull
     private String actividad;
     @NotNull
-    private String timestamp;
+    private String inicio;
+    @NotNull
+    private String termino;
     @NotNull
     private String usuario;
     @NotNull
@@ -36,12 +38,20 @@ public class Registro {
         this.actividad = actividad;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getInicio() {
+        return inicio;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setInicio(String inicio) {
+        this.inicio = inicio;
+    }
+
+    public String getTermino() {
+        return termino;
+    }
+
+    public void setTermino(String termino) {
+        this.termino = termino;
     }
 
     public String getUsuario() {

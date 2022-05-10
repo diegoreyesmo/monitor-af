@@ -2,20 +2,25 @@ package com.rrfinformatica.monitoraf;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -27,8 +32,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -47,9 +54,11 @@ public class MonitorAFIFragment extends Fragment {
     private Spinner daySpinner;
     private Spinner monthSpinner;
     private Spinner yearSpinner;
-    private Spinner hourSpinner;
-    private Spinner minutesSpinner;
-    private EditText durationEditText;
+    private Spinner startHourSpinner;
+    private Spinner startMinutesSpinner;
+    private Spinner endHourSpinner;
+    private Spinner endMinutesSpinner;
+    private TextView durationTextView;
 
     private SharedPreferences sharedPreferences;
     private String username;
@@ -58,6 +67,7 @@ public class MonitorAFIFragment extends Fragment {
     private EditText input;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,14 +86,17 @@ public class MonitorAFIFragment extends Fragment {
             daySpinner = (Spinner) root.findViewById(R.id.daySpinner);
             monthSpinner = (Spinner) root.findViewById(R.id.monthSpinner);
             yearSpinner = (Spinner) root.findViewById(R.id.yearSpinner);
-            hourSpinner = (Spinner) root.findViewById(R.id.beginHoursSpinner);
-            minutesSpinner = (Spinner) root.findViewById(R.id.beginMinutesSpinner);
-            durationEditText = (EditText) root.findViewById(R.id.durationEditText);
+            startHourSpinner = (Spinner) root.findViewById(R.id.beginHoursSpinner);
+            startMinutesSpinner = (Spinner) root.findViewById(R.id.beginMinutesSpinner);
+            endHourSpinner = (Spinner) root.findViewById(R.id.endHoursSpinner);
+            endMinutesSpinner = (Spinner) root.findViewById(R.id.endMinutesSpinner);
+            durationTextView = (TextView) root.findViewById(R.id.durationEditText);
             username = sharedPreferences.getString(getString(R.string.shared_preference_username), "default");
             submitButton.setOnClickListener(v -> {
-                String date = yearSpinner.getSelectedItem().toString() + "-" + monthSpinner.getSelectedItem().toString() + "-" + daySpinner.getSelectedItem().toString();
-                String time = hourSpinner.getSelectedItem().toString() + ":" + minutesSpinner.getSelectedItem().toString();
-                addRegistry(new RegistryDTO(activitySpinner.getSelectedItem().toString(), username, date + " " + time, durationEditText.getText().toString()));
+                String startDate = yearSpinner.getSelectedItem().toString() + "-" + monthSpinner.getSelectedItem().toString() + "-" + daySpinner.getSelectedItem().toString();
+                String startTime = startHourSpinner.getSelectedItem().toString() + ":" + startMinutesSpinner.getSelectedItem().toString();
+                String endTime = endHourSpinner.getSelectedItem().toString() + ":" + endMinutesSpinner.getSelectedItem().toString();
+                addRegistry(new RegistryDTO(activitySpinner.getSelectedItem().toString(), username, startDate + " " + startTime, startDate + " " + endTime, durationTextView.getText().toString().replace(" minutos", "")));
             });
 
             input = new EditText(context);
@@ -93,11 +106,6 @@ public class MonitorAFIFragment extends Fragment {
                 inputMethodManager.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
             }));
             input.requestFocus();
-
-            //if(input.getParent()!=null)
-            //    ((ViewGroup)input.getParent()).removeView(input); // <- fix
-
-
             VolleyQueue.addArrayRequest(generateRequestGetActivity(username));
             addActivityButton.setOnClickListener(v -> {
                 if (input.getParent() != null)
@@ -122,15 +130,75 @@ public class MonitorAFIFragment extends Fragment {
 
             });
 
-            int dayPosition = 0;// Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1;
-            int monthPosition = 0;// Calendar.getInstance().get(Calendar.MONTH);
+            LocalDateTime instance = LocalDateTime.now();
+            Log.d(TAG, instance.toString());
+
+            int dayPosition = instance.getDayOfMonth() - 1;// Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1;
+            int monthPosition = instance.getMonthValue() - 1;// Calendar.getInstance().get(Calendar.MONTH);
             int yearPosition = 0;
+            int hourPosition = instance.getHour();
+            int minutesPosition = instance.getMinute();
+
             daySpinner.setSelection(dayPosition);
             monthSpinner.setSelection(monthPosition);
             yearSpinner.setSelection(yearPosition);
 
-            hourSpinner.setSelection(dayPosition);
-            minutesSpinner.setSelection(monthPosition);
+            startHourSpinner.setSelection(hourPosition);
+            startMinutesSpinner.setSelection(minutesPosition);
+            endHourSpinner.setSelection(hourPosition);
+            endMinutesSpinner.setSelection(minutesPosition);
+
+            durationTextView.setText(String.format(Locale.ENGLISH, "%d minutos", 0));
+
+            startHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    calculateDuration(i, startMinutesSpinner.getSelectedItemPosition(), endHourSpinner.getSelectedItemPosition(), endMinutesSpinner.getSelectedItemPosition());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            startMinutesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    calculateDuration(startHourSpinner.getSelectedItemPosition(), i, endHourSpinner.getSelectedItemPosition(), endMinutesSpinner.getSelectedItemPosition());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+            endHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    calculateDuration(startHourSpinner.getSelectedItemPosition(), startMinutesSpinner.getSelectedItemPosition(), i, endMinutesSpinner.getSelectedItemPosition());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            endMinutesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    calculateDuration(startHourSpinner.getSelectedItemPosition(), startMinutesSpinner.getSelectedItemPosition(), endHourSpinner.getSelectedItemPosition(), i);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
 
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
@@ -139,12 +207,16 @@ public class MonitorAFIFragment extends Fragment {
         return root;
     }
 
+    private void calculateDuration(int startHour, int startMinute, int endHour, int endMinute) {
+        durationTextView.setText(String.format(Locale.ENGLISH, "%d minutos", ((endHour - startHour) * 60) + endMinute - startMinute));
+    }
+
     private void updateActivitySpinner(String[] arraySpinner) {
         try {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             activitySpinner.setAdapter(adapter);
-            activitySpinner.setSelection(adapter.getCount()-1);
+            activitySpinner.setSelection(adapter.getCount() - 1);
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
             e.printStackTrace();
@@ -170,7 +242,8 @@ public class MonitorAFIFragment extends Fragment {
             JSONObject postparams = new JSONObject();
             postparams.put("actividad", registryDTO.getActividad());
             postparams.put("usuario", registryDTO.getUsuario());
-            postparams.put("timestamp", registryDTO.getTimestamp());
+            postparams.put("incio", registryDTO.getIncio());
+            postparams.put("termino", registryDTO.getTermino());
             postparams.put("duracion", registryDTO.getDuracion());
             JsonObjectRequest jsonObjReq = generateRequestAddRegistry(postparams);
             jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

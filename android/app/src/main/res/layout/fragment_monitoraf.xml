@@ -102,6 +102,14 @@
                 android:orientation="horizontal">
 
                 <Spinner
+                    android:id="@+id/beginHoursSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:entries="@array/hours" />
+
+                <Spinner
                     android:id="@+id/beginMinutesSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -109,13 +117,7 @@
                     android:layout_weight="1"
                     android:entries="@array/minutes" />
 
-                <Spinner
-                    android:id="@+id/beginHoursSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:entries="@array/hours" />
+
             </LinearLayout>
 
             <TextView
@@ -131,13 +133,6 @@
                 android:layout_margin="5dp"
                 android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/endMinutesSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:entries="@array/minutes" />
 
                 <Spinner
                     android:id="@+id/endHoursSpinner"
@@ -146,24 +141,37 @@
                     android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:entries="@array/hours" />
+
+                <Spinner
+                    android:id="@+id/endMinutesSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:entries="@array/minutes" />
             </LinearLayout>
 
-
-            <TextView
-                android:id="@+id/textView4"
-                style="@style/titleText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/duration" />
-
-            <EditText
-                android:id="@+id/durationEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
-                android:inputType="number"
-                android:text="@string/one" />
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/textView4"
+                    style="@style/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/duration" />
+
+                <TextView
+                    android:id="@+id/durationEditText"
+                    style="@style/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/zero" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/submitButton"

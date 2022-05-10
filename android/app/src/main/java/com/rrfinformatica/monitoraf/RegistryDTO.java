@@ -3,13 +3,15 @@ package com.rrfinformatica.monitoraf;
 public class RegistryDTO {
     public String actividad;
     public String usuario;
-    public String timestamp;
+    public String incio;
+    public String termino;
     public String duracion;
 
-    public RegistryDTO(String actividad, String usuario, String timestamp, String duracion) {
+    public RegistryDTO(String actividad, String usuario, String incio, String termino, String duracion) {
         this.actividad = actividad;
         this.usuario = usuario;
-        this.timestamp = timestamp;
+        this.incio = incio;
+        this.termino = termino;
         this.duracion = duracion;
     }
 
@@ -29,12 +31,20 @@ public class RegistryDTO {
         this.usuario = usuario;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getIncio() {
+        return incio;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setIncio(String incio) {
+        this.incio = incio;
+    }
+
+    public String getTermino() {
+        return termino;
+    }
+
+    public void setTermino(String termino) {
+        this.termino = termino;
     }
 
     public String getDuracion() {

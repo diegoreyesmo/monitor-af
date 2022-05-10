@@ -12,7 +12,7 @@
     <string name="atencion">Atencion</string>
     <string name="fecha">fecha</string>
     <string name="hora">Hora inicio:</string>
-    <string name="duration">duracion (min)</string>
+    <string name="duration">duracion:</string>
     <string name="guardar">Guardar</string>
     <string name="email">Correo:</string>
     <string name="email_hint">correo@ejemplo.cl</string>
@@ -26,4 +26,5 @@
     <string name="ingresar">Ingresar</string>
     <string name="hora_termino">Hora termino:</string>
     <string name="activity_menu">Actividad</string>
+    <string name="zero">0</string>
 </resources>

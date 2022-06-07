@@ -11,8 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 public class UserActivity extends AppCompatActivity {
-    private static final String TAG = StringUtil.VERSION + "[validate_top] ";
-    private static final int OTP_MIN_LENGTH = 6;
+    private static final String TAG = StringUtil.VERSION + "[UserActivity] ";
     private Button buttonValidate;
     private EditText editText;
 
@@ -32,13 +31,14 @@ private String keySharedPreferenceUsername;
             keySharedPreferenceUsername = getString(R.string.shared_preference_username);
             if(sharedPreferences.contains(keySharedPreferenceUsername) && !sharedPreferences.getString(keySharedPreferenceUsername,"default").equals("default")){
                 editText.setText(sharedPreferences.getString(keySharedPreferenceUsername,"default"));
-                Intent intent = new Intent(getApplicationContext(), MonitorAFIFragment.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
             editor = sharedPreferences.edit();
             buttonValidate.setOnClickListener(l -> saveUsername());
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
+            e.printStackTrace();
         }
     }
 
@@ -49,7 +49,7 @@ private String keySharedPreferenceUsername;
                 String username = editTextValue.isEmpty() ? "default" : editTextValue;
                 editor.putString(keySharedPreferenceUsername, username);
                 editor.commit();
-                Intent intent = new Intent(getApplicationContext(), MonitorAFIFragment.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         } catch (Exception e) {

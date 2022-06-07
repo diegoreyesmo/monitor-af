@@ -2,13 +2,15 @@ package com.rrfinformatica.monitoraf;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.graphics.fonts.Font;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,15 +18,12 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.android.volley.toolbox.JsonArrayRequest;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 
@@ -36,23 +35,11 @@ public class BitacoraFragment extends Fragment {
     private static final String TAG = StringUtil.VERSION + "[report] ";
 
     private final TableLayout.LayoutParams rowLayoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
-    private Button submitButton;
-    private Spinner startDay;
-    private Spinner startMonth;
-    private Spinner startYear;
-    private Spinner endDay;
-    private Spinner endMonth;
-    private Spinner endYear;
-    private Spinner tipoDocumento;
-    private TextView resumenText;
-    private TableLayout tablaResumen;
-    private TableLayout tablaDetalle;
+
+    private TableLayout tableLayout;
     private String bufferResumen;
-    // WS
-    private RequestQueue requestQueue;
+
     private int timeout = 10000; // millis
-    private String resumenPath;
-    private String documentListPath;
 
     private SharedPreferences sharedPreferences;
     private Context context;
@@ -65,111 +52,90 @@ public class BitacoraFragment extends Fragment {
             context = container.getContext();
             VolleyQueue.getInstance(context);
             Telegram.getInstance(context);
-            sharedPreferences = context.getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
-            submitButton = (Button) root.findViewById(R.id.submitButton);
-            startDay = (Spinner) root.findViewById(R.id.startDay);
-            startMonth = (Spinner) root.findViewById(R.id.startMonth);
-            startYear = (Spinner) root.findViewById(R.id.startYear);
-            endDay = (Spinner) root.findViewById(R.id.endDay);
-            endMonth = (Spinner) root.findViewById(R.id.endMonth);
-            endYear = (Spinner) root.findViewById(R.id.endYear);
-            tipoDocumento = (Spinner) root.findViewById(R.id.tipo_documento_spinner);
-            resumenText = (TextView) root.findViewById(R.id.resumenText);
-            tablaResumen = (TableLayout) root.findViewById(R.id.tablaResumen);
-            tablaDetalle = (TableLayout) root.findViewById(R.id.tablaDetalle);
-
-            submitButton.setOnClickListener(v -> {
-                String startDate = startYear.getSelectedItem().toString() + "-" + startMonth.getSelectedItem().toString() + "-" + startDay.getSelectedItem().toString();
-                String endDate = endYear.getSelectedItem().toString() + "-" + endMonth.getSelectedItem().toString() + "-" + endDay.getSelectedItem().toString();
-                tablaResumen.removeAllViews();
-                tablaDetalle.removeAllViews();
-                //documentList(resumenRequestDTO);
-            });
-
-            int dayPosition = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1;
-            int monthPosition = Calendar.getInstance().get(Calendar.MONTH);
-            int yearPosition = 0;
-            startDay.setSelection(dayPosition);
-            startMonth.setSelection(monthPosition);
-            startYear.setSelection(yearPosition);
-
-            endDay.setSelection(dayPosition);
-            endMonth.setSelection(monthPosition);
-            endYear.setSelection(yearPosition);
-
-            //documentListPath = getString(R.string.invoice_range_url);
-
+            sharedPreferences = container.getContext().getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+            tableLayout = (TableLayout) root.findViewById(R.id.tablaDetalle);
+            registryLoad();
         } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
         }
         return root;
     }
 
-    private void documentList() {
+    private void registryLoad() {
         try {
-            JSONObject postparams = new JSONObject();
-//            postparams.put(StringUtil.USERNAME, resumenRequestDTO.getUsername());
-//            postparams.put(StringUtil.PASSWORD, resumenRequestDTO.getPassword());
-//            postparams.put(StringUtil.IDPOS, resumenRequestDTO.getIdPos());
-//            postparams.put(StringUtil.FECHADESDE, resumenRequestDTO.getFechadesde());
-//            postparams.put(StringUtil.FECHAHASTA, resumenRequestDTO.getFechahasta());
-//            postparams.put(StringUtil.TIPO_DOCUMENTO, resumenRequestDTO.getTipoDocumento());
-//            postparams.put(StringUtil.ID_SUCURSAL, resumenRequestDTO.getIdSucursal());
-            JsonObjectRequest jsonObjReq = generarRequestDocumentList(postparams);
+            String usuario = sharedPreferences.getString(getString(R.string.shared_preference_username), "default");
+            JsonArrayRequest jsonObjReq = generarRequestRegistryGet(usuario);
             jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(timeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            Telegram.sendMessage(TAG + "[list] " + postparams.toString(2));
-            requestQueue.add(jsonObjReq);
-        } catch (JSONException e) {
+            VolleyQueue.addArrayRequest(jsonObjReq);
+            Telegram.sendMessage(TAG + usuario);
+        } catch (Exception e) {
             ErrorUtil.handleError(e, TAG);
         }
     }
 
-    private JsonObjectRequest generarRequestDocumentList(JSONObject postparams) {
-        return new JsonObjectRequest(Request.Method.POST,
-                documentListPath, postparams,
+    private JsonArrayRequest generarRequestRegistryGet(String username) {
+        return new JsonArrayRequest(Request.Method.GET,
+                "http://ec2-18-118-50-38.us-east-2.compute.amazonaws.com:8081/registro/get?usuario=" + username, null,
                 response -> {
                     try {
                         if (response != null) {
-                            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//                            documentListResponseDTO = gson.fromJson(response.toString(), DocumentListResponseDTO.class);
-//
-//                            if (documentListResponseDTO != null && documentListResponseDTO.getDTEs() != null && !documentListResponseDTO.getDTEs().isEmpty()) {
-//                                TableRow headerRow = new TableRow(this);
-//
-//                                TextView folioHeaderTextView = new TextView(this);
-//                                folioHeaderTextView.setText("Folio");
-//
-//                                TextView montoHeaderTextView = new TextView(this);
-//                                montoHeaderTextView.setText("Monto");
-//
-//                                TextView fechaHeaderTextView = new TextView(this);
-//                                fechaHeaderTextView.setText("Fecha");
-//
-//                                headerRow.addView(folioHeaderTextView);
-//                                headerRow.addView(montoHeaderTextView);
-//                                headerRow.addView(fechaHeaderTextView);
-//                                headerRow.setLayoutParams(rowLayoutParams);
-//                                tablaDetalle.addView(headerRow);
-//                                for (DocumentListItemResponseDTO itemDTO : documentListResponseDTO.getDTEs()) {
-//                                    String monto = StringUtil.formatInt(StringUtil.parseInt(itemDTO.getAmount(), telegram, TAG));
-//                                    TableRow row = new TableRow(this);
-//
-//                                    TextView folioTextView = new TextView(this);
-//                                    folioTextView.setText(itemDTO.getFolio());
-//
-//                                    TextView montoTextView = new TextView(this);
-//                                    montoTextView.setText(monto);
-//
-//                                    TextView fechaTextView = new TextView(this);
-//                                    fechaTextView.setText(itemDTO.getDate());
-//
-//                                    row.addView(folioTextView);
-//                                    row.addView(montoTextView);
-//                                    row.addView(fechaTextView);
-//                                    row.setLayoutParams(rowLayoutParams);
-//                                    tablaDetalle.addView(row);
-//                                }
-//                            }
+                            TableRow headerRow = new TableRow(context);
+                            TextView actividadHeadTextView = new TextView(context);
+                            actividadHeadTextView.setText("actividad");
+                            TextView inicioHeadTextView = new TextView(context);
+                            inicioHeadTextView.setText("inicio");
+                            TextView terminoHeadTextView = new TextView(context);
+                            terminoHeadTextView.setText("término");
+                            TextView duracionHeadTextView = new TextView(context);
+                            duracionHeadTextView.setText("duración");
+                            headerRow.addView(actividadHeadTextView);
+                            headerRow.addView(inicioHeadTextView);
+                            headerRow.addView(terminoHeadTextView);
+                            headerRow.addView(duracionHeadTextView);
+                            headerRow.setLayoutParams(rowLayoutParams);
+                            tableLayout.addView(headerRow);
+                            if (response.length() > 0) {
+                                String dia = response.getJSONObject(0).getString("inicio").substring(0, 10);
+                                TableRow row1 = new TableRow(context);
+                                TextView dia1TextView = new TextView(context);
+                                dia1TextView.setText(dia);
+                                row1.addView(dia1TextView);
+                                dia1TextView.setTypeface(Typeface.DEFAULT_BOLD);
+                                tableLayout.addView(row1);
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject activity = response.getJSONObject(i);
+                                    String diaSiguiente = response.getJSONObject(i).getString("inicio").substring(0, 10);
+                                    if (!dia.equals(diaSiguiente)) {
+                                        Log.d(TAG, "dia:" + dia);
+                                        Log.d(TAG, "diaSiguiente:" + diaSiguiente);
+                                        dia = diaSiguiente;
+                                        TableRow row = new TableRow(context);
+                                        TextView diaTextView = new TextView(context);
+                                        diaTextView.setText(dia);
+                                        diaTextView.setTypeface(Typeface.DEFAULT_BOLD);
+                                        row.addView(diaTextView);
+                                        tableLayout.addView(row);
+                                    }
+                                    TableRow row = new TableRow(context);
+
+                                    TextView actividadTextView = new TextView(context);
+                                    actividadTextView.setText(activity.getString("actividad"));
+                                    TextView inicioTextView = new TextView(context);
+                                    inicioTextView.setText(activity.getString("inicio").substring(10));
+                                    TextView terminoTextView = new TextView(context);
+                                    terminoTextView.setText(activity.getString("termino").substring(10));
+                                    TextView duracionTextView = new TextView(context);
+                                    duracionTextView.setText(activity.getString("duracion"));
+                                    row.addView(actividadTextView);
+                                    row.addView(inicioTextView);
+                                    row.addView(terminoTextView);
+                                    row.addView(duracionTextView);
+                                    row.setLayoutParams(rowLayoutParams);
+                                    tableLayout.addView(row);
+
+                                }
+
+                            }
                         }
                     } catch (Exception e) {
                         ErrorUtil.handleError(e, TAG);

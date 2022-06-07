@@ -6,7 +6,7 @@ public class StringUtil {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String TELEPHONE = "telephone";
-    public static final String VERSION = "rrf v6.5 ";
+    public static final String VERSION = "afi v1.0 ";
     public static final String APPLICATION_JSON_TYPE = "application/json";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String OTP = "otp";

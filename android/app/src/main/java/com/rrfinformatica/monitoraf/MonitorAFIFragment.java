@@ -313,7 +313,7 @@ public class MonitorAFIFragment extends Fragment {
 
     private JsonObjectRequest generateRequestAddRegistry(JSONObject postparams) {
         try {
-            Telegram.sendMessage("registro/add:" + postparams.toString(1));
+            Telegram.sendMessage(TAG + "registro/add:" + postparams.toString(1));
         } catch (JSONException e) {
             e.printStackTrace();
         }
